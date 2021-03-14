@@ -13,9 +13,9 @@ class Board:
     def __init__(self) -> None:
         pass
 
-    def send(self) -> List[List[Optional[int]]]:
+    def send(self, player: Player) -> None:
         """Send the state of the board to the player."""
-        return self.state
+        player.receive(self.state)
 
     def receive(self, move: Tuple[Tuple[int, int], int]) -> bool:
         """Receive a move from a player."""
