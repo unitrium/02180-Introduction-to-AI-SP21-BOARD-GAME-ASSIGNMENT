@@ -44,3 +44,6 @@ class Human(Player):
         direction = int(input(
             "The direction of the black part? 0 is up, 1 is right, 2 is down, 3 is left"))
         return ((x, y), direction)
+
+    def receive(self, state: List[List[int]]) -> None:
+        return super().receive(state)
