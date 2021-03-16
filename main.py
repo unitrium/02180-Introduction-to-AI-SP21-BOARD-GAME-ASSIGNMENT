@@ -4,7 +4,7 @@ from code.ai import AI
 
 if __name__ == "__main__":
     board = Board(11)
-    #Just for some testing, we don't have to have this in the end if it's always AI.
+    # Just for some testing, we don't have to have this in the end if it's always AI.
     ai_response = ""
     while ai_response != "YES" and ai_response != "NO":
         ai_response = str(input("Would you like to play with an AI? YES/NO"))
@@ -28,28 +28,16 @@ if __name__ == "__main__":
         else:
             black = Human(white=False)
 
-
-    #ASSUMPTION: AI WILL FIND OUT MOVE UPON RECEIVING .receive()?
+    white_turn = True
     while not board.terminal_state():
         # Main file for the project. Contains the game loop.
-        white.receive(board.state)
-        print("Whites turn.")
-        possible_actions = board.actions()
-        if type(white) is Human:
-            action = None
-            white.display(board.state)
-            #Endless loop because player is not using object Action(x,y,dir), but the board.actions() does.
-            while not (action in possible_actions):
-                action = white.ask_action()
-        if board.terminal_state():
-            break
-        print("Blacks turn.")
-        black.receive(board.state)
-        possible_actions = board.actions()
-        if black is Human:
-            action = None
-            black.display(board.state)
-            while action not in possible_actions:
-                action = black.ask_action()
+        if white_turn:
+            print("White turn.")
+            board.send(white)
+            white_turn = False
+        else:
+            print("Black turn.")
+            board.send(black)
+            white_turn = True
 
-    board._check_winner(board.state)
+    board.declare_winner(board.state)

@@ -1,5 +1,5 @@
 # Class for the board of the game
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 from .player import Player, Action
 
@@ -18,10 +18,11 @@ class Board:
 
     def send(self, player: Player) -> None:
         """Send the state of the board to the player."""
-        player.receive(self.state)
+        player.receive(self)
 
     def receive(self, move: Action) -> bool:
-        """Receive a move from a player."""
+        """Receive a move from a player.
+        :return: Whether the move has been accepted."""
         if not self._check_integrity(move):
             return False
         self.state[move.x][move.y] = 0
@@ -33,7 +34,7 @@ class Board:
             self.state[move.x][move.y-1] = 1
         else:
             self.state[move.x-1][move.y] = 1
-        return False
+        return True
 
     def terminal_state(self) -> bool:
         """Determine whether the game is over."""
@@ -43,11 +44,11 @@ class Board:
         """Whether a move is acceptable by the current board."""
         if not self.state[move.x][move.y] is None:
             return False
-        if move.direction not in self._free_neighbors():
+        if move.direction not in self._free_neighbors(move.x, move.y):
             return False
         return True
 
-    def _check_winner(self) -> None:
+    def declare_winner(self) -> None:
         """Declares a winner."""
         white_block_sizes = [0] * self.rule
         black_block_sizes = [0] * self.rule

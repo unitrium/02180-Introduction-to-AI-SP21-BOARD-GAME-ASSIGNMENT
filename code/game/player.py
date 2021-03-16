@@ -22,7 +22,7 @@ class Player(ABC):
         self.white = white
 
     @abstractmethod
-    def receive(self, state: List[List[int]]) -> None:
+    def receive(self, board: "Board") -> None:
         """Receive the state of the board."""
         pass
 
@@ -40,7 +40,7 @@ class Human(Player):
             printed_line = ""
             for col in line:
                 if col is None:
-                    printed_line += "  "
+                    printed_line += "_ "
                 elif col == 0:
                     printed_line += "X "
                 else:
@@ -56,5 +56,11 @@ class Human(Player):
             "The direction of the black part? 0 is up, 1 is right, 2 is down, 3 is left"))
         return Action(x, y, direction)
 
-    def receive(self, state: List[List[int]]) -> None:
-        return super().receive(state)
+    def receive(self, board: "Board") -> None:
+        move_accepted = False
+        while not move_accepted:
+            self.display(board.state)
+            if board.receive(self.ask_action()):
+                move_accepted = True
+            else:
+                print("Your move isn't possible. Please choose again.")
