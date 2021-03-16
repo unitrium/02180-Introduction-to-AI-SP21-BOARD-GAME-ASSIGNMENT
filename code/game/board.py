@@ -10,8 +10,8 @@ class Board:
     """
     state: List[List[Optional[int]]]
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, size: int) -> None:
+        self.state = [[None for _ in range(size)] for _ in range(size)]
 
     def send(self, player: Player) -> None:
         """Send the state of the board to the player."""
