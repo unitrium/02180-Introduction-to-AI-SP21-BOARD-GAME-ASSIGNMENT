@@ -57,17 +57,10 @@ class Board:
         direction = move[1]
         x = move[0][0]
         y = move[0][1]
-        if self.state[x][y] == 0 or self.state[x][y] == 1:
+
+        if not self.state[x][y] is None:
             return False
-        if x >= self.size or x < 0 or y >= self.size or y < 0:
-            return False
-        if x == 0 and direction == 3:
-            return False
-        if y == 0 and direction == 0:
-            return False
-        if x == (self.size - 1) and direction == 1:
-            return False
-        if y == (self.size - 1) and direction == 2:
+        if direction not in self._free_neighbors():
             return False
         return True
 
