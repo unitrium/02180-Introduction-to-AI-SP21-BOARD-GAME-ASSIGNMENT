@@ -4,6 +4,17 @@ from typing import List, Optional, Tuple
 from .player import Player
 
 
+class Action:
+    x: int
+    y: int
+    direction: int
+
+    def __init__(self, x: int, y: int, direction: int) -> None:
+        self.x = x
+        self.y = y
+        self.direction = direction
+
+
 class Board:
     """A board the players can interact with.
     Initially empty.
@@ -37,8 +48,8 @@ class Board:
             self.state[x-1][y] = 1
         return False
 
-    def check_continue(self) -> bool:
-        """Whether a move is still possible."""
+    def terminal_state(self) -> bool:
+        """Determine whether the game is over."""
         pass
 
     def _check_integrity(self, move: Tuple[Tuple[int, int], int]) -> bool:
