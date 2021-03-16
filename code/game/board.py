@@ -50,7 +50,7 @@ class Board:
 
     def terminal_state(self) -> bool:
         """Determine whether the game is over."""
-        pass
+        return len(self.actions()) == 0
 
     def _check_integrity(self, move: Tuple[Tuple[int, int], int]) -> bool:
         """Whether a move is acceptable by the current board."""
