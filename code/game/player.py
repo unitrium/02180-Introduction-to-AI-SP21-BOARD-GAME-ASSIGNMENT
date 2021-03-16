@@ -3,6 +3,17 @@ from typing import List, Tuple
 from abc import ABC, abstractmethod
 
 
+class Action:
+    x: int
+    y: int
+    direction: int
+
+    def __init__(self, x: int, y: int, direction: int) -> None:
+        self.x = x
+        self.y = y
+        self.direction = direction
+
+
 class Player(ABC):
     """A player that can interact with a board."""
     white: bool
@@ -36,14 +47,14 @@ class Human(Player):
                     printed_line += "O "
             print(printed_line[0:-1])
 
-    def ask_action(self) -> Tuple[Tuple[int, int], int]:
+    def ask_action(self) -> Action:
         """Asks the human for a move."""
         print("What is your move ?")
         x = int(input("Start by giving the x coordinate of the white part."))
         y = int(input("Now give the y coordinate of the white part."))
         direction = int(input(
             "The direction of the black part? 0 is up, 1 is right, 2 is down, 3 is left"))
-        return ((x, y), direction)
+        return Action(x, y, direction)
 
     def receive(self, state: List[List[int]]) -> None:
         return super().receive(state)
