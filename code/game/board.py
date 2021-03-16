@@ -70,3 +70,26 @@ class Board:
         if y == (self.size - 1) and direction == 2:
             return False
         return True
+
+    def actions(self) -> List[Action]:
+        """Computes all the possible actions."""
+        actions = []
+        for y, line in enumerate(self.state):
+            for x, tile in enumerate(line):
+                if tile is None:
+                    for direction in self._free_neighbors(x, y):
+                        actions.append(Action(x, y, direction))
+        return actions
+
+    def _free_neighbors(self, x: int, y: int) -> List[int]:
+        """Returns the free adjacents directions 0 up, 1 right, 2 down, 3 left."""
+        neighbors = []
+        if not y == 0 and self.state[x][y-1] is None:
+            neighbors.append(0)
+        if not x == (self.size - 1) and self.state[x+1][y] is None:
+            neighbors.append(1)
+        if not y == (self.size - 1) and self.state[x][y+1] is None:
+            neighbors.append(2)
+        if not x == 0 and self.state[x-1][y] is None:
+            neighbors.append(3)
+        return neighbors
