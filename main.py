@@ -1,5 +1,6 @@
 # Main file for the project. Contains the game loop.
 from code.game import Board, Human
+from code.ai import AI
 
 if __name__ == "__main__":
     board = Board(11)
