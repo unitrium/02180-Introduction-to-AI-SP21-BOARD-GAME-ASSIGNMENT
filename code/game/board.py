@@ -19,7 +19,21 @@ class Board:
 
     def receive(self, move: Tuple[Tuple[int, int], int]) -> bool:
         """Receive a move from a player."""
-        pass
+        if not self._check_integrity(move):
+            return False
+        direction = move[1]
+        x = move[0][0]
+        y = move[0][1]
+        self.state[x][y] = 0
+        if direction == 0:
+            self.state[x][y+1] = 1
+        elif direction == 1:
+            self.state[x+1][y] = 1
+        elif direction == 2:
+            self.state[x][y-1] = 1
+        else:
+            self.state[x-1][y] = 1
+        return False
 
     def check_continue(self) -> bool:
         """Whether a move is still possible."""
