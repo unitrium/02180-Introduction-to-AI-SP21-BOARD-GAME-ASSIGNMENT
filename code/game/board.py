@@ -50,26 +50,20 @@ class Board:
 
     def terminal_state(self) -> bool:
         """Determine whether the game is over."""
-        pass
+        return len(self.actions()) == 0
 
     def _check_integrity(self, move: Tuple[Tuple[int, int], int]) -> bool:
         """Whether a move is acceptable by the current board."""
         direction = move[1]
         x = move[0][0]
         y = move[0][1]
-        if self.state[x][y] == 0 or self.state[x][y] == 1:
+
+        if not self.state[x][y] is None:
             return False
-        if x >= self.size or x < 0 or y >= self.size or y < 0:
-            return False
-        if x == 0 and direction == 3:
-            return False
-        if y == 0 and direction == 0:
-            return False
-        if x == (self.size - 1) and direction == 1:
-            return False
-        if y == (self.size - 1) and direction == 2:
+        if direction not in self._free_neighbors():
             return False
         return True
+
 
     def _check_winner(self, state: List[List[int]]):
         BLOCKS_WINNING_RULE_COUNT = 3 #How many blocks to count for each player
@@ -132,3 +126,27 @@ class Board:
         if y + 1 < len(state):
             current_block += self._calculate_block_size(state, visited_tiles, x, y+1, color)
         return current_block
+
+    def actions(self) -> List[Action]:
+        """Computes all the possible actions."""
+        actions = []
+        for y, line in enumerate(self.state):
+            for x, tile in enumerate(line):
+                if tile is None:
+                    for direction in self._free_neighbors(x, y):
+                        actions.append(Action(x, y, direction))
+        return actions
+
+    def _free_neighbors(self, x: int, y: int) -> List[int]:
+        """Returns the free adjacents directions 0 up, 1 right, 2 down, 3 left."""
+        neighbors = []
+        if not y == 0 and self.state[x][y-1] is None:
+            neighbors.append(0)
+        if not x == (self.size - 1) and self.state[x+1][y] is None:
+            neighbors.append(1)
+        if not y == (self.size - 1) and self.state[x][y+1] is None:
+            neighbors.append(2)
+        if not x == 0 and self.state[x-1][y] is None:
+            neighbors.append(3)
+        return neighbors
+
