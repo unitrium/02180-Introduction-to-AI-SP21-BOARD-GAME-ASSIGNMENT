@@ -77,11 +77,11 @@ class Board:
         white_block_sizes = [0] * BLOCKS_WINNING_RULE_COUNT
         black_block_sizes = [0] * BLOCKS_WINNING_RULE_COUNT
         #Initialize array of booleans to check frontiers
-        #visited_tiles = [[False] * len(state)] * len(state)
         visited_tiles = []
         for i in range(11):
             visited_tiles.append([False] * 11)
 
+        #Iterate over all tiles in state array
         for i in range(len(state)):
             for j in range(len(state[i])):
                 if state[i][j] != None:
@@ -91,7 +91,7 @@ class Board:
                         temp_blocks = black_block_sizes
                     lowest_current_block = temp_blocks[0]
                     lowest_current_block_index = 0
-                    #Itereate over n-1 elements in list, to find lowest nubmer of block_size
+                    #Itereate over n-1 elements in list, to find lowest nubmer of block_size, and if it should insert the block_size into it
                     for n in range(1, len(temp_blocks)):
                         if lowest_current_block > temp_blocks[n]:
                             lowest_current_block = temp_blocks[n]
@@ -113,7 +113,7 @@ class Board:
             print("Black has the highest total amount of blocks, and therefore is the winner!")
         else:
             print("Both players has the same total amount of blocks, and therefore it's a draw!")
-        pass
+
 
     def _calculate_block_size(self, state: List[List[int]], visited_tiles, x: int, y: int, color: int) -> int:
         if visited_tiles[x][y] == True: #Has this node already been counted?
