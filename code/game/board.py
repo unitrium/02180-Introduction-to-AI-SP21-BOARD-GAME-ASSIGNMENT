@@ -70,3 +70,65 @@ class Board:
         if y == (self.size - 1) and direction == 2:
             return False
         return True
+
+    def _check_winner(self, state: List[List[int]]):
+        BLOCKS_WINNING_RULE_COUNT = 3 #How many blocks to count for each player
+        BOARD_SIZE_N = 11
+        white_block_sizes = [0] * BLOCKS_WINNING_RULE_COUNT
+        black_block_sizes = [0] * BLOCKS_WINNING_RULE_COUNT
+        #Initialize array of booleans to check frontiers
+        #visited_tiles = [[False] * len(state)] * len(state)
+        visited_tiles = []
+        for i in range(11):
+            visited_tiles.append([False] * 11)
+
+        for i in range(len(state)):
+            for j in range(len(state[i])):
+                if state[i][j] != None:
+                    block_size = self._calculate_block_size(state, visited_tiles, i, j, state[i][j])
+                    temp_blocks = white_block_sizes
+                    if state[i][j] == 1:
+                        temp_blocks = black_block_sizes
+                    lowest_current_block = temp_blocks[0]
+                    lowest_current_block_index = 0
+                    #Itereate over n-1 elements in list, to find lowest nubmer of block_size
+                    for n in range(1, len(temp_blocks)):
+                        if lowest_current_block > temp_blocks[n]:
+                            lowest_current_block = temp_blocks[n]
+                            lowest_current_block_index = n
+                    if block_size > lowest_current_block:
+                        temp_blocks[lowest_current_block_index] = block_size
+        white_total_blocks = 0
+        for block_size in white_block_sizes:
+            white_total_blocks += block_size
+        black_total_blocks = 0
+        for block_size in black_block_sizes:
+            black_total_blocks += block_size
+        print("Game ended with the following score: ")
+        print("  - White finished the game with the following biggest blocks: "+str(white_block_sizes)+" totalling a "+str(white_total_blocks)+" block size.")
+        print("  - Black finished the game with the following biggest blocks: "+str(black_block_sizes)+" totalling a "+str(black_total_blocks)+" block size.")
+        if white_total_blocks > black_total_blocks:
+            print("White has the highest total amount of blocks, and therefore is the winner!")
+        elif black_total_blocks > white_total_blocks:
+            print("Black has the highest total amount of blocks, and therefore is the winner!")
+        else:
+            print("Both players has the same total amount of blocks, and therefore it's a draw!")
+        pass
+
+    def _calculate_block_size(self, state: List[List[int]], visited_tiles, x: int, y: int, color: int) -> int:
+        if visited_tiles[x][y] == True: #Has this node already been counted?
+            return 0
+        if state[x][y] != color: #If its not the same color, return.
+            return 0
+        visited_tiles[x][y] = True
+        current_block = 1
+        #Check all nearby neighbors
+        if x - 1 > 0:
+            current_block += self._calculate_block_size(state, visited_tiles, x-1, y, color)
+        if x + 1 < len(state):
+            current_block += self._calculate_block_size(state, visited_tiles, x+1, y, color)
+        if y - 1 > 0:
+            current_block += self._calculate_block_size(state, visited_tiles, x, y-1, color)
+        if y + 1 < len(state):
+            current_block += self._calculate_block_size(state, visited_tiles, x, y+1, color)
+        return current_block
