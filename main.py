@@ -28,10 +28,11 @@ if __name__ == "__main__":
         else:
             black = Human(white=False)
 
-    white_turn = True
+    #Using turn logic as described in analysis. turncount mod 2 = 1 means white turn, else black.
+    turncount = 1
     while not board.terminal_state():
         # Main file for the project. Contains the game loop.
-        if white_turn:
+        if turncount % 2 == 1:
             print("White turn.")
             board.send(white)
             white_turn = False
@@ -39,5 +40,6 @@ if __name__ == "__main__":
             print("Black turn.")
             board.send(black)
             white_turn = True
+        turncount += 1
 
     board.declare_winner(board.state)
