@@ -1,27 +1,16 @@
 """Class implementing an artificial intelligence to play the game."""
 from ..game import Player, Board
-from abc import abstractmethod
 
 
-class AlphaBeta():
-    def __init__(self, max_depth, player_color, eval_score):
+class AI(Player):
+    max_depth: int
+    eval_score: int
+
+    def __init__(self, white: bool, max_depth: int, eval_score: int) -> None:
+        super().__init__(white)
         self.max_depth = max_depth
-        self.player_color = player_color
+        self.eval_score = eval_score
 
-    @abstractmethod
-    def alpha_beta_pruning(self, node, current_depth, alpha, beta, maximizingPlayer) -> int:
-        """alpha_beta_pruning"""
-        pass
-
-    @abstractmethod
-    def evaluation_function(self, node) -> int:
-        """compute evaluation_function"""
-        """for the moment return 1"""
-        """TO DO"""
-        pass
-
-
-class AI(Player, AlphaBeta):
     def receive(self, board: Board) -> None:
 
         list_actions = board.actions()  # get the list of possible actions
@@ -39,36 +28,36 @@ class AI(Player, AlphaBeta):
         else:
             raise Exception("Board has not accepted move by the AI.")
 
-        def alpha_beta_pruning(self, node, current_depth, alpha, beta, maximizingPlayer) -> int:
-            self.max_depth = 20  # for the moment it's a random max_depth
-            # if node is a leaf node return evaluation value of the node
-            if current_depth == self.max_depth or board.terminal_state():
-                e = self.evaluation_function(node)
-                # print(e)
-                return e
+    def alpha_beta_pruning(self, node, current_depth, alpha, beta, maximizingPlayer) -> int:
+        self.max_depth = 20  # for the moment it's a random max_depth
+        # if node is a leaf node return evaluation value of the node
+        if current_depth == self.max_depth or self.board.terminal_state():
+            e = self.evaluation_function(node)
+            # print(e)
+            return e
 
-            if maximizingPlayer:  # max part of the minimax
-                maxvalue = float('-inf')
-                # for each child of the node (I don't know how to write this part)
-                for child in node:
-                    value = self.alpha_beta_pruning(
-                        child, current_depth+1, alpha, beta, False)
-                    maxvalue = max(maxvalue, value)
-                    alpha = max(alpha, maxvalue)
-                    if beta <= alpha:
-                        break
-                return maxvalue
-            else:
-                minvalue = float('inf')  # min part of the minimax
-                # for each child of the node (I don't know how to write this part)
-                for child in node:
-                    value = self.alpha_beta_pruning(
-                        child, depth+1, alpha, beta, True)
-                    minvalue = min(minvalue, value)
-                    beta = min(beta, minvalue)
-                    if beta <= alpha:
-                        break
-                return minvalue
+        if maximizingPlayer:  # max part of the minimax
+            maxvalue = float('-inf')
+            # for each child of the node (I don't know how to write this part)
+            for child in node:
+                value = self.alpha_beta_pruning(
+                    child, current_depth+1, alpha, beta, False)
+                maxvalue = max(maxvalue, value)
+                alpha = max(alpha, maxvalue)
+                if beta <= alpha:
+                    break
+            return maxvalue
+        else:
+            minvalue = float('inf')  # min part of the minimax
+            # for each child of the node (I don't know how to write this part)
+            for child in node:
+                value = self.alpha_beta_pruning(
+                    child, current_depth+1, alpha, beta, True)
+                minvalue = min(minvalue, value)
+                beta = min(beta, minvalue)
+                if beta <= alpha:
+                    break
+            return minvalue
 
     def evaluation_function(self, node) -> int:  # return the evaluation value
         # TO DO
