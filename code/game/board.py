@@ -3,7 +3,7 @@ from typing import List, Optional
 from copy import deepcopy
 
 from .player import Player, Action
-
+import time
 
 class Board:
     """A board the players can interact with.
@@ -38,17 +38,23 @@ class Board:
     def update_state(self, move: Action):
         self.state[move.x][move.y] = 0
         if move.direction == 0:
-            self.state[move.x][move.y+1] = 1
+            self.state[move.x][move.y-1] = 1
         elif move.direction == 1:
             self.state[move.x+1][move.y] = 1
         elif move.direction == 2:
-            self.state[move.x][move.y-1] = 1
+            self.state[move.x][move.y+1] = 1
         else:
             self.state[move.x-1][move.y] = 1
 
     def terminal_state(self) -> bool:
         """Determine whether the game is over."""
-        return len(self.actions()) == 0
+        for x, line in enumerate(self.state):
+            for y, tile in enumerate(line):
+                if tile is None:
+                    for direction in self._free_neighbors(x, y):
+                        return False
+        return True
+        #return len(self.actions()) == 0
 
     def _check_integrity(self, move: Action) -> bool:
         """Whether a move is acceptable by the current board."""
@@ -90,7 +96,7 @@ class Board:
         black_total_blocks = 0
         for block_size in black_block_sizes:
             black_total_blocks += block_size
-        return {white_total_blocks, black_total_blocks}
+        return [white_total_blocks, black_total_blocks]
 
     def declare_winner(self) -> None:
         """Declares a winner."""
@@ -137,8 +143,8 @@ class Board:
     def actions(self) -> List[Action]:
         """Computes all the possible actions."""
         actions = []
-        for y, line in enumerate(self.state):
-            for x, tile in enumerate(line):
+        for x, line in enumerate(self.state):
+            for y, tile in enumerate(line):
                 if tile is None:
                     for direction in self._free_neighbors(x, y):
                         actions.append(Action(x, y, direction))
@@ -156,20 +162,18 @@ class Board:
     def _free_neighbors(self, x: int, y: int) -> List[int]:
         """Returns the free adjacents directions 0 up, 1 right, 2 down, 3 left."""
         neighbors = []
-        if not y == 0 and self.state[x][y-1] is None:
+        if (not y == 0) and self.state[x][y-1] is None:
             neighbors.append(0)
-        if not x == (self.size - 1) and self.state[x+1][y] is None:
+        if (not x == (self.size - 1)) and self.state[x+1][y] is None:
             neighbors.append(1)
-        if not y == (self.size - 1) and self.state[x][y+1] is None:
+        if (not y == (self.size - 1)) and self.state[x][y+1] is None:
             neighbors.append(2)
-        if not x == 0 and self.state[x-1][y] is None:
+        if (not x == 0) and self.state[x-1][y] is None:
             neighbors.append(3)
         return neighbors
 
     @staticmethod
     def board_from_move(board: "Board", action: Action) -> Optional["Board"]:
-        if not board._check_integrity(action):
-            return None
         new_board = board.__copy__()
         new_board.update_state(action)
         return new_board
