@@ -1,4 +1,5 @@
 """Class implementing an artificial intelligence to play the game."""
+from code.game import board
 from ..game import Player, Board, Action
 from typing import List, Optional
 
@@ -30,18 +31,17 @@ class AI(Player):
             raise Exception("Board has not accepted move by the AI.")
 
     def alpha_beta_pruning(self, node: Board, current_depth: int, alpha: int, beta: int, maximizingPlayer: bool) -> int:
+        """Alpha beta pruning implementation."""
         # if node is a leaf node return evaluation value of the node
-        if current_depth == self.max_depth or self.board.terminal_state():
-            e = self.evaluation_function(node)
-            # print(e)
-            return e
+        if current_depth == self.max_depth or node.terminal_state():
+            return self.evaluation_function(node)
 
         if maximizingPlayer:  # max part of the minimax
             maxvalue = float('-inf')
             # for each child of the node (I don't know how to write this part)
-            for child in node:
+            for action in node.actions():
                 value = self.alpha_beta_pruning(
-                    child, current_depth+1, alpha, beta, False)
+                    Board.board_from_move(node, action), current_depth+1, alpha, beta, False)
                 maxvalue = max(maxvalue, value)
                 alpha = max(alpha, maxvalue)
                 if beta <= alpha:
@@ -50,17 +50,26 @@ class AI(Player):
         else:
             minvalue = float('inf')  # min part of the minimax
             # for each child of the node (I don't know how to write this part)
-            for child in node:
+            for action in node.actions():
                 value = self.alpha_beta_pruning(
-                    child, current_depth+1, alpha, beta, True)
+                    Board.board_from_move(node, action), current_depth+1, alpha, beta, True)
                 minvalue = min(minvalue, value)
                 beta = min(beta, minvalue)
                 if beta <= alpha:
                     break
             return minvalue
 
-    def evaluation_function(self, node) -> int:  # return the evaluation value
-        # TO DO
+    def eval(self, state: Board) -> int:
+        """Evaluate a state for a the player."""
+        scores = state.calculate_players_total_block_size()
+        if state.terminal_state():
+            if self.white and scores[0] > scores[1] or not self.white and scores[0] < scores[1]:
+                return float('inf')
+            elif scores[0] == scores[1]:
+                return 0
+            return float('-inf')
+        openess_player = state.openness(self.white)
+        openess_openent = state.openness(not self.white)
         eval = 1
         return eval
 
