@@ -21,7 +21,7 @@ if __name__ == "__main__":
         if color == "BLACK":
             white = AI(white=True)
         else:
-            black = AI(white=False)
+            black = AI(white=False, max_depth=10, eval_score=10)
     else:
         if color == "BLACK":
             white = Human(white=True)
