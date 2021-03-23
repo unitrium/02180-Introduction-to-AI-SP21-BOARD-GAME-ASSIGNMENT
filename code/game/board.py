@@ -48,8 +48,7 @@ class Board:
             return False
         return True
 
-    def declare_winner(self) -> None:
-        """Declares a winner."""
+    def calculate_players_total_block_size(self):
         white_block_sizes = [0] * self.rule
         black_block_sizes = [0] * self.rule
         # Initialize array of booleans to check frontiers
@@ -81,11 +80,16 @@ class Board:
         black_total_blocks = 0
         for block_size in black_block_sizes:
             black_total_blocks += block_size
+        return {white_total_blocks, black_total_blocks}
+
+    def declare_winner(self) -> None:
+        """Declares a winner."""
+        res = calculate_players_total_block_size(self)
+        white_total_blocks = res[0]
+        black_total_blocks = res[1]
         print("Game ended with the following score: ")
-        print(f"  - White finished the game with the following biggest blocks: \
-              {white_block_sizes} totalling a {white_total_blocks} block size.")
-        print(f"  - Black finished the game with the following biggest blocks: \
-              {black_block_sizes} totalling a {black_total_blocks} block size.")
+        print(f"  - White finished the game totalling a {white_total_blocks} block size.")
+        print(f"  - Black finished the game totalling a {black_total_blocks} block size.")
         if white_total_blocks > black_total_blocks:
             print(
                 "White has the highest total amount of blocks, and therefore is the winner!")
