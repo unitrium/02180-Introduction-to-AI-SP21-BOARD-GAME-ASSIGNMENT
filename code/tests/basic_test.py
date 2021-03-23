@@ -1,12 +1,13 @@
 import pytest
 
 from ..game import Board, Human
+from ..ai import AI
 
 
 def test_basic_create():
     board = Board(size=7)
     player_1 = Human(white=True)
-    player_2 = Human(white=False)
+    player_2 = AI(white=False, max_depth=10, eval_score=10)
 
 
 def test_actions():
