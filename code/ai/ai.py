@@ -19,7 +19,7 @@ class AI(Player):
         evalmax = 0
         for a in list_actions:  # for each possible action compute the evaluation value
             eval_score = self.alpha_beta_pruning(
-                a, 0, float('-inf'), float('inf'), True)
+                Board.board_from_move(board, a), 0, float('-inf'), float('inf'), True)
             if eval_score > evalmax:  # if it's the best value
                 evalmax = eval_score
                 best_action = a  # we can take this action which is the best
@@ -29,8 +29,7 @@ class AI(Player):
         else:
             raise Exception("Board has not accepted move by the AI.")
 
-    def alpha_beta_pruning(self, node, current_depth, alpha, beta, maximizingPlayer) -> int:
-        self.max_depth = 20  # for the moment it's a random max_depth
+    def alpha_beta_pruning(self, node: Board, current_depth: int, alpha: int, beta: int, maximizingPlayer: bool) -> int:
         # if node is a leaf node return evaluation value of the node
         if current_depth == self.max_depth or self.board.terminal_state():
             e = self.evaluation_function(node)
