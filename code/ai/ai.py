@@ -1,11 +1,11 @@
 """Class implementing an artificial intelligence to play the game."""
 from ..game import Player, Board
-
+from typing import List, Optional
 
 class AI(Player):
     max_depth: int
     eval_score: int
-
+    
     def __init__(self, white: bool, max_depth: int, eval_score: int) -> None:
         super().__init__(white)
         self.max_depth = max_depth
@@ -63,3 +63,15 @@ class AI(Player):
         # TO DO
         eval = 1
         return eval
+    
+    def result(state: List[List[Optional[int]]], x: int, y: int, D: int) -> List[List[Optional[int]]]:
+        state[x][y] = 0
+        if D == 0:
+            state[x][y-1]=1
+        if D == 1:
+            state[x+1][y]=1
+        if D == 2:
+            state[x][y+1]=1
+        if D == 3: 
+            state[x-1][y]=1
+        return state
