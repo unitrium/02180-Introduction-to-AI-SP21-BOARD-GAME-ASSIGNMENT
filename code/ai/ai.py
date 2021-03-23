@@ -4,10 +4,10 @@ from ..game import Player, Board, Action
 from typing import List, Optional
 import time
 
+
 class AI(Player):
     max_depth: int
     times_iterated: int
-
 
     def __init__(self, white: bool, max_depth: int) -> None:
         super().__init__(white)
@@ -30,11 +30,12 @@ class AI(Player):
             print("IA move")
         else:
             raise Exception("Board has not accepted move by the AI.")
-        print("Best move: "+str(evalmax)+" with: ["+str(best_action.x)+","+str(best_action.y)+"] dir: "+str(best_action.direction))
+        print("Best move: "+str(evalmax)+" with: ["+str(best_action.x)+","+str(
+            best_action.y)+"] dir: "+str(best_action.direction))
         print("Times iterated through: "+str(self.times_iterated))
         end = time.time()
-        print("Time taken for depth: "+str(self.max_depth)+" is: "+str(end - beginning)+" seconds.")
-
+        print("Time taken for depth: "+str(self.max_depth) +
+              " is: "+str(end - beginning)+" seconds.")
 
     def alpha_beta_pruning(self, node: Board, current_depth: int, alpha: int, beta: int, maximizingPlayer: bool) -> int:
         self.times_iterated += 1
@@ -83,7 +84,3 @@ class AI(Player):
         end = time.time()
         #print("Eval time taken:"+str(end-start))
         return (score_player - score_opponent) + (openness_player - openness_opponent)
-
-    def result(self, action: Action) -> Board:
-
-        return state
