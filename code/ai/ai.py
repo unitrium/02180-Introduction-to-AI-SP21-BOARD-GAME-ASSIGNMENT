@@ -70,8 +70,9 @@ class AI(Player):
             return float('-inf')
         openess_player = state.openness(self.white)
         openess_openent = state.openness(not self.white)
-        eval = 1
-        return eval
+        score_player = scores[int(not self.white)]
+        score_openent = scores[int(self.white)]
+        return score_player - score_openent + openess_player - openess_openent
 
     def result(self, action: Action) -> Board:
 
