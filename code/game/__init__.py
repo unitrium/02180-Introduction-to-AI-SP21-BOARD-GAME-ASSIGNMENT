@@ -1,2 +1,2 @@
 from .board import Board
-from .player import Player, Human
+from .player import Player, Human, Action

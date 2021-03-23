@@ -1,5 +1,6 @@
 # Class for the board of the game
 from typing import List, Optional
+from copy import deepcopy
 
 from .player import Player, Action
 
@@ -16,6 +17,12 @@ class Board:
         self.rule = winning_rule
         self.state = [[None for _ in range(size)] for _ in range(size)]
 
+    def __copy__(self) -> "Board":
+        """Return a deepcopy of the current instance."""
+        new_board = Board(self.size, self.rule)
+        new_board.state = deepcopy(self.state)
+        return new_board
+
     def send(self, player: Player) -> None:
         """Send the state of the board to the player."""
         player.receive(self)
@@ -25,6 +32,10 @@ class Board:
         :return: Whether the move has been accepted."""
         if not self._check_integrity(move):
             return False
+        self.update_state(move)
+        return True
+
+    def update_state(self, move: Action):
         self.state[move.x][move.y] = 0
         if move.direction == 0:
             self.state[move.x][move.y+1] = 1
@@ -34,7 +45,6 @@ class Board:
             self.state[move.x][move.y-1] = 1
         else:
             self.state[move.x-1][move.y] = 1
-        return True
 
     def terminal_state(self) -> bool:
         """Determine whether the game is over."""
@@ -84,12 +94,14 @@ class Board:
 
     def declare_winner(self) -> None:
         """Declares a winner."""
-        res = calculate_players_total_block_size(self)
+        res = self.calculate_players_total_block_size(self)
         white_total_blocks = res[0]
         black_total_blocks = res[1]
         print("Game ended with the following score: ")
-        print(f"  - White finished the game totalling a {white_total_blocks} block size.")
-        print(f"  - Black finished the game totalling a {black_total_blocks} block size.")
+        print(
+            f"  - White finished the game totalling a {white_total_blocks} block size.")
+        print(
+            f"  - Black finished the game totalling a {black_total_blocks} block size.")
         if white_total_blocks > black_total_blocks:
             print(
                 "White has the highest total amount of blocks, and therefore is the winner!")
@@ -153,3 +165,11 @@ class Board:
         if not x == 0 and self.state[x-1][y] is None:
             neighbors.append(3)
         return neighbors
+
+    @staticmethod
+    def board_from_move(board: "Board", action: Action) -> Optional["Board"]:
+        if not board._check_integrity(action):
+            return None
+        new_board = board.__copy__()
+        new_board.update_state(action)
+        return new_board

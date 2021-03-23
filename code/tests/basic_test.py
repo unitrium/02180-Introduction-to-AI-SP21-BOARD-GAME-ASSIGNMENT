@@ -1,6 +1,5 @@
 import pytest
-
-from ..game import Board, Human
+from ..game import Board, Human, Action
 from ..ai import AI
 
 
@@ -18,3 +17,12 @@ def test_actions():
     assert actions[0].x == 0
     assert actions[0].y == 0
     assert actions[0].direction == 1
+
+
+def test_copy():
+    board = Board(size=7)
+    board.receive(Action(1, 1, 1))
+    board2 = board.__copy__()
+    board2.receive(Action(4, 4, 0))
+    assert board.state[4][4] is None
+    assert board2.state[4][4] == 0
