@@ -5,6 +5,7 @@ from copy import deepcopy
 from .player import Player, Action
 import time
 
+
 class Board:
     """A board the players can interact with.
     Initially empty.
@@ -36,15 +37,15 @@ class Board:
         return True
 
     def update_state(self, move: Action):
-        self.state[move.x][move.y] = 0
+        self.state[move.y][move.x] = 0
         if move.direction == 0:
-            self.state[move.x][move.y-1] = 1
+            self.state[move.y+1][move.x] = 1
         elif move.direction == 1:
-            self.state[move.x+1][move.y] = 1
+            self.state[move.y][move.x + 1] = 1
         elif move.direction == 2:
-            self.state[move.x][move.y+1] = 1
+            self.state[move.y-1][move.x] = 1
         else:
-            self.state[move.x-1][move.y] = 1
+            self.state[move.y][move.x-1] = 1
 
     def terminal_state(self) -> bool:
         """Determine whether the game is over."""
@@ -54,7 +55,7 @@ class Board:
                     for direction in self._free_neighbors(x, y):
                         return False
         return True
-        #return len(self.actions()) == 0
+        # return len(self.actions()) == 0
 
     def _check_integrity(self, move: Action) -> bool:
         """Whether a move is acceptable by the current board."""
@@ -162,13 +163,13 @@ class Board:
     def _free_neighbors(self, x: int, y: int) -> List[int]:
         """Returns the free adjacents directions 0 up, 1 right, 2 down, 3 left."""
         neighbors = []
-        if (not y == 0) and self.state[x][y-1] is None:
+        if (not y == 0) and self.state[y+1][x] is None:
             neighbors.append(0)
-        if (not x == (self.size - 1)) and self.state[x+1][y] is None:
+        if (not x == (self.size - 1)) and self.state[y][x+1] is None:
             neighbors.append(1)
-        if (not y == (self.size - 1)) and self.state[x][y+1] is None:
+        if (not y == (self.size - 1)) and self.state[y-1][x] is None:
             neighbors.append(2)
-        if (not x == 0) and self.state[x-1][y] is None:
+        if (not x == 0) and self.state[y][x-1] is None:
             neighbors.append(3)
         return neighbors
 
