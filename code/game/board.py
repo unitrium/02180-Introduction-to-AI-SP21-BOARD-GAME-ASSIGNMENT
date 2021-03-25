@@ -163,11 +163,11 @@ class Board:
     def _free_neighbors(self, x: int, y: int) -> List[int]:
         """Returns the free adjacents directions 0 up, 1 right, 2 down, 3 left."""
         neighbors = []
-        if (not y == 0) and self.state[y+1][x] is None:
+        if (not y == 0) and self.state[y-1][x] is None:
             neighbors.append(0)
         if (not x == (self.size - 1)) and self.state[y][x+1] is None:
             neighbors.append(1)
-        if (not y == (self.size - 1)) and self.state[y-1][x] is None:
+        if (not y == (self.size - 1)) and self.state[y+1][x] is None:
             neighbors.append(2)
         if (not x == 0) and self.state[y][x-1] is None:
             neighbors.append(3)
