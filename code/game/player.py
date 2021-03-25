@@ -36,8 +36,12 @@ class Human(Player):
         represented by O."""
         print("Your turn, the board looks like this:")
         print()
+        print("  0 1 2 3 4 5 6 7 8 9 10")
+        number = 0
         for line in state:
-            printed_line = ""
+            printed_line = str(number)
+            if number < 10:
+                printed_line += " "
             for col in line:
                 if col is None:
                     printed_line += "_ "
@@ -46,6 +50,7 @@ class Human(Player):
                 else:
                     printed_line += "O "
             print(printed_line[0:-1])
+            number += 1
 
     def ask_action(self) -> Action:
         """Asks the human for a move."""

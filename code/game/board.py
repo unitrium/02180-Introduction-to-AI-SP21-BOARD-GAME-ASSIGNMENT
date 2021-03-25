@@ -39,18 +39,18 @@ class Board:
     def update_state(self, move: Action):
         self.state[move.y][move.x] = 0
         if move.direction == 0:
-            self.state[move.y+1][move.x] = 1
+            self.state[move.y-1][move.x] = 1
         elif move.direction == 1:
             self.state[move.y][move.x + 1] = 1
         elif move.direction == 2:
-            self.state[move.y-1][move.x] = 1
+            self.state[move.y+1][move.x] = 1
         else:
             self.state[move.y][move.x-1] = 1
 
     def terminal_state(self) -> bool:
         """Determine whether the game is over."""
-        for x, line in enumerate(self.state):
-            for y, tile in enumerate(line):
+        for y, line in enumerate(self.state):
+            for x, tile in enumerate(line):
                 if tile is None:
                     for direction in self._free_neighbors(x, y):
                         return False
@@ -59,7 +59,9 @@ class Board:
 
     def _check_integrity(self, move: Action) -> bool:
         """Whether a move is acceptable by the current board."""
-        if not self.state[move.x][move.y] is None:
+        if move.y < 0 or move.x < 0 or move.y >= self.size or move.x >= self.size:
+            return False
+        if not self.state[move.y][move.x] is None:
             return False
         if move.direction not in self._free_neighbors(move.x, move.y):
             return False
@@ -144,8 +146,8 @@ class Board:
     def actions(self) -> List[Action]:
         """Computes all the possible actions."""
         actions = []
-        for x, line in enumerate(self.state):
-            for y, tile in enumerate(line):
+        for y, line in enumerate(self.state):
+            for x, tile in enumerate(line):
                 if tile is None:
                     for direction in self._free_neighbors(x, y):
                         actions.append(Action(x, y, direction))
@@ -154,8 +156,8 @@ class Board:
     def openness(self, color: int) -> int:
         """Checks how many open positions are next to each color."""
         openness = 0
-        for x, line in enumerate(self.state):
-            for y, cell in enumerate(line):
+        for y, line in enumerate(self.state):
+            for x, cell in enumerate(line):
                 if cell == color:
                     openness += len(self._free_neighbors(x, y))
         return openness
