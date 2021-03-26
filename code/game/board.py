@@ -68,6 +68,7 @@ class Board:
         return True
 
     def calculate_players_total_block_size(self):
+        """Calculates the number of connected tiles for each color."""
         white_block_sizes = [0] * self.rule
         black_block_sizes = [0] * self.rule
         # Initialize array of booleans to check frontiers
@@ -75,7 +76,6 @@ class Board:
         for _ in range(self.size):
             visited_tiles.append([False] * self.size)
 
-        # Iterate over all tiles in state array
         for i, line in enumerate(self.state):
             for j, tile in enumerate(line):
                 if not tile is None:
@@ -86,20 +86,13 @@ class Board:
                         temp_blocks = black_block_sizes
                     lowest_current_block = temp_blocks[0]
                     lowest_current_block_index = 0
-                    # Itereate over n-1 elements in list, to find lowest nubmer of block_size, and if it should insert the block_size into it
                     for n in range(1, len(temp_blocks)):
                         if lowest_current_block > temp_blocks[n]:
                             lowest_current_block = temp_blocks[n]
                             lowest_current_block_index = n
                     if block_size > lowest_current_block:
                         temp_blocks[lowest_current_block_index] = block_size
-        white_total_blocks = 0
-        for block_size in white_block_sizes:
-            white_total_blocks += block_size
-        black_total_blocks = 0
-        for block_size in black_block_sizes:
-            black_total_blocks += block_size
-        return [white_total_blocks, black_total_blocks]
+        return [sum(white_block_sizes), sum(black_block_sizes)]
 
     def declare_winner(self) -> None:
         """Declares a winner."""
@@ -122,7 +115,8 @@ class Board:
                 "Both players has the same total amount of blocks, and therefore it's a draw!")
 
     def _calculate_block_size(self, visited_tiles, x: int, y: int, color: int) -> int:
-        if visited_tiles[x][y] == True:  # Has this node already been counted?
+        """Counts the number of connected tiles."""
+        if visited_tiles[x][y] == True:
             return 0
         if self.state[x][y] != color:  # If its not the same color, return.
             return 0
@@ -177,6 +171,7 @@ class Board:
 
     @staticmethod
     def board_from_move(board: "Board", action: Action) -> Optional["Board"]:
+        """Create a new board from a move."""
         new_board = board.__copy__()
         new_board.update_state(action)
         return new_board

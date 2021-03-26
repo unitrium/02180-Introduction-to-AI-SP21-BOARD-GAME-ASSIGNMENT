@@ -4,6 +4,10 @@ import time
 
 
 class AI(Player):
+    """
+    A player implementation controlled by an AI.
+    max_depth: the maximum depth the AI will go in the search tree to find the best move.
+    """
     max_depth: int
     times_iterated: int
 
@@ -29,12 +33,12 @@ class AI(Player):
             print("IA move")
         else:
             raise Exception("Board has not accepted move by the AI.")
-        print("Best move: "+str(evalmax)+" with: ["+str(best_action.x)+","+str(
-            best_action.y)+"] dir: "+str(best_action.direction))
-        print("Times iterated through: "+str(self.times_iterated))
+        print(
+            f"Best move: {evalmax} with: [{best_action.x},{best_action.y}] dir: {best_action.direction}")
+        print(f"Times iterated through: {self.times_iterated}")
         end = time.time()
-        print("Time taken for depth: "+str(self.max_depth) +
-              " is: "+str(end - beginning)+" seconds.")
+        print(f"Time taken for depth: {self.max_depth} \
+              is: {end - beginning} seconds.")
 
     def alpha_beta_pruning(self, node: Board, current_depth: int,
                            alpha: int, beta: int, maximizingPlayer: bool) -> int:
