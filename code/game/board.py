@@ -9,6 +9,8 @@ import time
 class Board:
     """A board the players can interact with.
     Initially empty.
+    State: A matrix representing the board, None means the cell is free,
+    0 is occupied by a white tile, 1 by a black tile.
     """
     state: List[List[Optional[int]]]
     size: int
@@ -38,14 +40,8 @@ class Board:
 
     def update_state(self, move: Action):
         self.state[move.y][move.x] = 0
-        if move.direction == 0:
-            self.state[move.y-1][move.x] = 1
-        elif move.direction == 1:
-            self.state[move.y][move.x + 1] = 1
-        elif move.direction == 2:
-            self.state[move.y+1][move.x] = 1
-        else:
-            self.state[move.y][move.x-1] = 1
+        x, y = move.direction_position()
+        self.state[y][x] = 1
 
     def terminal_state(self) -> bool:
         """Determine whether the game is over."""
