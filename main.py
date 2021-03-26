@@ -1,4 +1,4 @@
-# Main file for the project. Contains the game loop.
+""" Main file for the project. Contains the game loop."""
 from code.game import Board, Human
 from code.ai import AI
 
@@ -28,10 +28,9 @@ if __name__ == "__main__":
         else:
             black = Human(white=False)
 
-    #Using turn logic as described in analysis. turncount mod 2 = 1 means white turn, else black.
+    # Using turn logic as described in analysis. turncount mod 2 = 1 means white turn, else black.
     turncount = 1
     while not board.terminal_state():
-        # Main file for the project. Contains the game loop.
         if turncount % 2 == 1:
             print("White turn.")
             board.send(white)
