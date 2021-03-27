@@ -8,8 +8,8 @@ board = Board(11)
 player_1 = AI(white=True, max_depth=1)
 player_2 = AI(white=False, max_depth=1)
 turncount = 1
-timearray1 =  []
-timearray2 =  []
+timearray1 = []
+timearray2 = []
 print("Start")
 while not board.terminal_state():
     if turncount % 2 == 1:
@@ -27,9 +27,9 @@ while not board.terminal_state():
         print(f"Player 2 took {time() - start_2}s")
         white_turn = True
     turncount += 1
-    
-    plt.plot(timearray1, label = "black")
-    plt.plot(timearray2, label = "white")
-    plt.xlabel('Round')
-    plt.ylabel('Time in seconds')
-    plt.show()
+
+plt.plot(timearray1, label="black")
+plt.plot(timearray2, label="white")
+plt.xlabel('Round')
+plt.ylabel('Time in seconds')
+plt.show()
