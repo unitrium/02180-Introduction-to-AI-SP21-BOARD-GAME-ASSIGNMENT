@@ -122,7 +122,7 @@ class Board:
         """Counts the number of connected tiles."""
         if visited_tiles[x][y] == True:
             return 0
-        if self.state[x][y] != color:  # If its not the same color, return.
+        if self.state[x][y] != color:
             return 0
         visited_tiles[x][y] = True
         current_block = 1
@@ -164,11 +164,12 @@ class Board:
 
     def openness_from_move(self, move: Action):
         """Modifies the openness scores from the move."""
-        if self.touch_color(move.x, move.y):
-            self.white_openness -= 1
+        self.white_openness -= len(self.touch_color(move.x, move.y))
+        self.black_openness -= len(self.touch_color(move.x,
+                                                    move.y, white=False))
         x, y = move.direction_position()
-        if self.touch_color(x, y, white=False):
-            self.black_openness -= 1
+        self.black_openness -= len(self.touch_color(x, y, white=False))
+        self.white_openness -= len(self.touch_color(x, y))
 
     def _free_neighbors(self, x: int, y: int) -> List[int]:
         """Returns the free adjacents directions 0 up, 1 right, 2 down, 3 left."""
@@ -184,23 +185,26 @@ class Board:
         return neighbors
 
     def score_from_move(self, move: Action):
-        if self.touch_color(move.x, move.y):
+        if len(self.touch_color(move.x, move.y)) > 0:
             self.white_score += 1
         x, y = move.direction_position()
-        if self.touch_color(x, y, white=False):
+        if len(self.touch_color(x, y, white=False)) > 0:
             self.black_score += 1
 
-    def touch_color(self, x: int, y: int, white: bool = True) -> bool:
-        """Determines if a cell is next to another of the same color."""
+    def touch_color(self, x: int, y: int, white: bool = True) -> List[int]:
+        """Determines all the neighbors of the same color.
+        Returns a list with the directions of the same color neighbors 0 up, 1 right, 2 down, 3 left.
+        """
+        neighbors = []
         if (not y == 0) and self.state[y-1][x] == int(white):
-            return True
+            neighbors.append(0)
         if (not x == (self.size - 1)) and self.state[y][x+1] == int(white):
-            return True
+            neighbors.append(1)
         if (not y == (self.size - 1)) and self.state[y+1][x] == int(white):
-            return True
+            neighbors.append(2)
         if (not x == 0) and self.state[y][x-1] == int(white):
-            return True
-        return False
+            neighbors.append(3)
+        return neighbors
 
     @staticmethod
     def board_from_move(board: "Board", action: Action) -> Optional["Board"]:
