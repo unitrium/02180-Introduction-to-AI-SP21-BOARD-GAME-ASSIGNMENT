@@ -29,3 +29,8 @@ Then you have to choose if you want to play with an AI (YES/NO) and which color 
 In our implementation, X represents the white color and O represents the black one.  
 
 When it's your turn you have to indicate where you want to play by giving the x and y coordinates of the white part of the piece and the direction d of where will be put the black part.
+
+By default the AI doesn't use the heuristics. To play the game with the heuristics you have to change line 24 in the ai.py file by stating the heuristics_edge and heuristics_neighbors variables to True:  
+```python
+heuristics_edges: bool = True, heuristics_neighbors: bool = True
+```
