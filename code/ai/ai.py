@@ -38,7 +38,7 @@ class AI(Player):
         evalmax = 0
         self.best_action = list_actions[0]
         board.compute_openness()
-        board.calculate_players_total_block_size()
+        # board.calculate_players_total_block_size()
         self.prunes = 0
         eval_score = self.alpha_beta_pruning(
             board, 0, float('-inf'), float('inf'), True)
@@ -56,6 +56,7 @@ class AI(Player):
         """Computes all the possible actions."""
         actions = []
         heuristic_actions = []
+        free_tiles = 0
         for y, line in enumerate(board.state):
             for x, tile in enumerate(line):
                 if tile is None:
@@ -65,6 +66,9 @@ class AI(Player):
                             if self.move_heuristics(action, board):
                                 heuristic_actions.append(action)
                         actions.append(action)
+                    free_tiles += 1
+        if free_tiles == board.size * board.size:
+            return [Action(int(board.size/2), 1, 0)]
         return heuristic_actions if len(heuristic_actions) > len(actions)/10 else actions
 
     def move_heuristics(self, action: Action, board: Board) -> bool:
@@ -127,7 +131,7 @@ class AI(Player):
 
     def eval(self, state: Board) -> int:
         """Evaluate a state for a the player."""
-        state.calculate_players_total_block_size()
+        # state.calculate_players_total_block_size()
         if state.terminal_state():
             if self.white and state.white_score > state.black_score or not self.white and state.white_score < state.black_score:
                 return float('inf')
