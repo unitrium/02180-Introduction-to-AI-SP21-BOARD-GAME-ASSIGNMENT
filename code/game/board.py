@@ -47,6 +47,8 @@ class Board:
         return True
 
     def update_state(self, move: Action):
+        """Updates the state of the board, first tile is the white 0.
+        The direction of the move determines the black tile 1."""
         self.state[move.y][move.x] = 0
         x, y = move.direction_position()
         self.state[y][x] = 1
