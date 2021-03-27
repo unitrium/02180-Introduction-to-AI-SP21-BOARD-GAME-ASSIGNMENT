@@ -21,7 +21,7 @@ python 3.8
 
 In order to play this game, you have to run 
 ```python
-python3 main.py
+python main.py
 ```
 
 Then you have to choose if you want to play with an AI (YES/NO) and which color you want (WHITE/BLACK). The white player starts the game.
@@ -30,7 +30,7 @@ In our implementation, X represents the white color and O represents the black o
 
 When it's your turn you have to indicate where you want to play by giving the x and y coordinates of the white part of the piece and the direction d of where will be put the black part.
 
-By default the AI doesn't use the heuristics. To play the game with the heuristics you have to change line 24 in the ai.py file by stating the heuristics_edge and heuristics_neighbors variables to True:  
+By default the AI doesn't use the heuristics. To play the game with the heuristics you have to change lines 22 and 24 in the main.py file by adding the heuristics_edge and heuristics_neighbors variables stating to True:  
 ```python
 heuristics_edges: bool = True, heuristics_neighbors: bool = True
 ```
