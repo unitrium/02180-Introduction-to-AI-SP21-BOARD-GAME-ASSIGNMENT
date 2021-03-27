@@ -111,7 +111,7 @@ class Board:
         if self.white_score > self.black_score:
             print(
                 "White has the highest total amount of blocks, and therefore is the winner!")
-        elif self.white_score > self.black_score:
+        elif self.white_score < self.black_score:
             print(
                 "Black has the highest total amount of blocks, and therefore is the winner!")
         else:
