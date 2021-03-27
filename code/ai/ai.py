@@ -1,6 +1,5 @@
 """Class implementing an artificial intelligence to play the game."""
 from ..game import Player, Board
-import time
 
 
 class AI(Player):
@@ -17,7 +16,6 @@ class AI(Player):
 
     def receive(self, board: Board) -> None:
         """Call when its the palyer's turn, send him the state of the board."""
-        beginning = time.time()
         self.times_iterated = 0
         list_actions = board.actions()
         eval_score = 0
@@ -38,9 +36,6 @@ class AI(Player):
         print(
             f"Best move: {evalmax} with: [{best_action.x},{best_action.y}] dir: {best_action.direction}")
         print(f"Times iterated through: {self.times_iterated}")
-        end = time.time()
-        print(f"Time taken for depth: {self.max_depth} \
-              is: {end - beginning} seconds.")
 
     def alpha_beta_pruning(self, node: Board, current_depth: int,
                            alpha: int, beta: int, maximizingPlayer: bool) -> int:
@@ -73,8 +68,6 @@ class AI(Player):
 
     def eval(self, state: Board) -> int:
         """Evaluate a state for a the player."""
-        start = time.time()
-        #scores = state.calculate_players_total_block_size()
         if state.terminal_state():
             if self.white and state.white_score > state.black_score or not self.white and state.white_score < state.black_score:
                 return float('inf')
@@ -85,6 +78,4 @@ class AI(Player):
         openness_opponent = state.white_openness if not self.white else state.black_openness
         score_player = state.white_score if self.white else state.black_score
         score_opponent = state.white_score if not self.white else state.black_score
-        end = time.time()
-        #print("Eval time taken:"+str(end-start))
         return (score_player - score_opponent) + (openness_player - openness_opponent)
