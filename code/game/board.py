@@ -59,7 +59,6 @@ class Board:
                     for direction in self._free_neighbors(x, y):
                         return False
         return True
-        # return len(self.actions()) == 0
 
     def _check_integrity(self, move: Action) -> bool:
         """Whether a move is acceptable by the current board."""
@@ -140,16 +139,6 @@ class Board:
             current_block += self._calculate_block_size(
                 visited_tiles, x, y+1, color)
         return current_block
-
-    def actions(self) -> List[Action]:
-        """Computes all the possible actions."""
-        actions = []
-        for y, line in enumerate(self.state):
-            for x, tile in enumerate(line):
-                if tile is None:
-                    for direction in self._free_neighbors(x, y):
-                        actions.append(Action(x, y, direction))
-        return actions
 
     def compute_openness(self):
         """Updates how many open positions are next to each color."""
