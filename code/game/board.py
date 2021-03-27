@@ -97,7 +97,8 @@ class Board:
                             lowest_current_block_index = n
                     if block_size > lowest_current_block:
                         temp_blocks[lowest_current_block_index] = block_size
-        return [sum(white_block_sizes), sum(black_block_sizes)]
+        self.white_score = sum(white_block_sizes)
+        self.black_score = sum(black_block_sizes)
 
     def declare_winner(self) -> None:
         """Declares a winner."""

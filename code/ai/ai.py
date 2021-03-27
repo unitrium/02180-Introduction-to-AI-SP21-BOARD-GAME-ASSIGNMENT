@@ -38,11 +38,13 @@ class AI(Player):
         evalmax = 0
         self.best_action = list_actions[0]
         board.compute_openness()
+        board.calculate_players_total_block_size()
         res = board.calculate_players_total_block_size()
         board.white_score = res[0]
         board.black_score = res[1]
         self.prunes = 0
-        eval_score = self.alpha_beta_pruning(board, 0, float('-inf'), float('inf'), True)
+        eval_score = self.alpha_beta_pruning(
+            board, 0, float('-inf'), float('inf'), True)
 
         if board.receive(self.best_action):
             print("IA move")
