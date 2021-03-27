@@ -100,7 +100,7 @@ class Board:
 
     def declare_winner(self) -> None:
         """Declares a winner."""
-        res = self.calculate_players_total_block_size(self)
+        res = self.calculate_players_total_block_size()
         white_total_blocks = res[0]
         black_total_blocks = res[1]
         print("Game ended with the following score: ")
@@ -185,11 +185,9 @@ class Board:
         return neighbors
 
     def score_from_move(self, move: Action):
-        if len(self.touch_color(move.x, move.y)) > 0:
-            self.white_score += 1
+        self.white_score += len(self.touch_color(move.x, move.y))
         x, y = move.direction_position()
-        if len(self.touch_color(x, y, white=False)) > 0:
-            self.black_score += 1
+        self.black_score += len(self.touch_color(x, y, white=False))
 
     def touch_color(self, x: int, y: int, white: bool = True) -> List[int]:
         """Determines all the neighbors of the same color.

@@ -1,6 +1,6 @@
 """Class implementing an artificial intelligence to play the game."""
 from ..game import Player, Board
-
+import time
 
 class AI(Player):
     """
@@ -10,6 +10,9 @@ class AI(Player):
     max_depth: int
     times_iterated: int
 
+    SCORE_WEIGHT = 3
+    OPENNESS_WEIGHT = 1
+
     def __init__(self, white: bool, max_depth: int) -> None:
         super().__init__(white)
         self.max_depth = max_depth
@@ -17,11 +20,15 @@ class AI(Player):
     def receive(self, board: Board) -> None:
         """Call when its the palyer's turn, send him the state of the board."""
         self.times_iterated = 0
+        STARTTIME = time.time()
         list_actions = board.actions()
         eval_score = 0
         evalmax = 0
         best_action = list_actions[0]
         board.compute_openness()
+        res = board.calculate_players_total_block_size()
+        board.white_score = res[0]
+        board.black_score = res[1]
         for action in list_actions:
             eval_score = self.alpha_beta_pruning(
                 Board.board_from_move(board, action), 0, float('-inf'), float('inf'), True)
@@ -36,14 +43,17 @@ class AI(Player):
         print(
             f"Best move: {evalmax} with: [{best_action.x},{best_action.y}] dir: {best_action.direction}")
         print(f"Times iterated through: {self.times_iterated}")
-
+        ENDTIME = time.time()
+        print("Time taken:"+str(ENDTIME-STARTTIME))
     def alpha_beta_pruning(self, node: Board, current_depth: int,
                            alpha: int, beta: int, maximizingPlayer: bool) -> int:
         """Alpha beta pruning implementation."""
         self.times_iterated += 1
         # if node is a leaf node return evaluation value of the node
         if current_depth == self.max_depth or node.terminal_state():
-            return self.eval(node)
+            res = self.eval(node)
+            #print("EVAL: "+str(res))
+            return res
 
         if maximizingPlayer:  # max part of the minimax
             maxvalue = float('-inf')
@@ -52,6 +62,7 @@ class AI(Player):
                     Board.board_from_move(node, action), current_depth+1, alpha, beta, False)
                 maxvalue = max(maxvalue, value)
                 alpha = max(alpha, maxvalue)
+                #print("ALPHA: "+str(alpha)+" BETA: "+str(beta))
                 if beta <= alpha:
                     break
             return maxvalue
@@ -78,4 +89,4 @@ class AI(Player):
         openness_opponent = state.white_openness if not self.white else state.black_openness
         score_player = state.white_score if self.white else state.black_score
         score_opponent = state.white_score if not self.white else state.black_score
-        return (score_player - score_opponent) + (openness_player - openness_opponent)
+        return (self.SCORE_WEIGHT * score_player - self.SCORE_WEIGHT * score_opponent) + self.OPENNESS_WEIGHT * (openness_player - openness_opponent)

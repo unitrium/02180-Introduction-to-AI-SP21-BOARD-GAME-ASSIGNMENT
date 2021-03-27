@@ -41,4 +41,4 @@ if __name__ == "__main__":
             white_turn = True
         turncount += 1
 
-    board.declare_winner(board.state)
+    board.declare_winner()
