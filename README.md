@@ -7,6 +7,7 @@ The goal of this assignment is to implement an AI which play a board game.
 
 This code is for the game called __Taiji__.
 
+
 ## Requirements
 
 python 3.8
@@ -18,7 +19,7 @@ In order to play this game, you have to run
 python3 main.py
 ```
 
-Then you have to choose if you want to play with an AI (YES/NO) and which color you want (WHITE/BLACK). 
+Then you have to choose if you want to play with an AI (YES/NO) and which color you want (WHITE/BLACK). The white player starts the game.
 
 In our implementation, X represents the white color and O represents the black one.  
 
