@@ -13,6 +13,17 @@ class Action:
         self.y = y
         self.direction = direction
 
+    def direction_position(self) -> Tuple[int, int]:
+        """Determines the position of the black tile."""
+        if self.direction == 0:
+            return (self.x, self.y-1)
+        elif self.direction == 1:
+            return (self.x+1, self.y)
+        elif self.direction == 2:
+            return (self.x, self.y+1)
+        else:
+            return (self.x-1, self.y)
+
 
 class Player(ABC):
     """A player that can interact with a board."""
