@@ -2,7 +2,6 @@
 from typing import List, Optional
 
 from .player import Player, Action
-import time
 
 
 class Board:
