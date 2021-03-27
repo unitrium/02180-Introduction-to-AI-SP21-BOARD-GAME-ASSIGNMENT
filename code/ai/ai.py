@@ -22,6 +22,8 @@ class AI(Player):
         list_actions = board.actions()
         eval_score = 0
         evalmax = 0
+        best_action = list_actions[0]
+        board.compute_openness()
         for action in list_actions:
             eval_score = self.alpha_beta_pruning(
                 Board.board_from_move(board, action), 0, float('-inf'), float('inf'), True)
@@ -72,17 +74,17 @@ class AI(Player):
     def eval(self, state: Board) -> int:
         """Evaluate a state for a the player."""
         start = time.time()
-        scores = state.calculate_players_total_block_size()
+        #scores = state.calculate_players_total_block_size()
         if state.terminal_state():
-            if self.white and scores[0] > scores[1] or not self.white and scores[0] < scores[1]:
+            if self.white and state.white_score > state.black_score or not self.white and state.white_score < state.black_score:
                 return float('inf')
-            elif scores[0] == scores[1]:
+            elif state.white_score == state.black_score:
                 return 0
             return float('-inf')
-        openness_player = state.openness(white=self.white)
-        openness_opponent = state.openness(white=not self.white)
-        score_player = scores[not self.white]
-        score_opponent = scores[self.white]
+        openness_player = state.white_openness if self.white else state.black_openness
+        openness_opponent = state.white_openness if not self.white else state.black_openness
+        score_player = state.white_score if self.white else state.black_score
+        score_opponent = state.white_score if not self.white else state.black_score
         end = time.time()
         #print("Eval time taken:"+str(end-start))
         return (score_player - score_opponent) + (openness_player - openness_opponent)
