@@ -16,6 +16,10 @@ class AI(Player):
     SCORE_WEIGHT = 3
     OPENNESS_WEIGHT = 1
 
+    prunes = 0
+
+    best_action: Action
+
     def __init__(self, white: bool, max_depth: int,
                  heuristics_edges: bool = False, heuristics_neighbors: bool = False
                  ) -> None:
@@ -32,25 +36,22 @@ class AI(Player):
         list_actions = self.actions(board)
         eval_score = 0
         evalmax = 0
-        best_action = list_actions[0]
+        self.best_action = list_actions[0]
         board.compute_openness()
         res = board.calculate_players_total_block_size()
         board.white_score = res[0]
         board.black_score = res[1]
-        for action in list_actions:
-            eval_score = self.alpha_beta_pruning(
-                Board.board_from_move(board, action), 0, float('-inf'), float('inf'), True)
-            if eval_score > evalmax:
-                evalmax = eval_score
-                best_action = action
+        self.prunes = 0
+        eval_score = self.alpha_beta_pruning(board, 0, float('-inf'), float('inf'), True)
 
-        if board.receive(best_action):
+        if board.receive(self.best_action):
             print("IA move")
         else:
             raise Exception("Board has not accepted move by the AI.")
         print(
-            f"Best move: {evalmax} with: [{best_action.x},{best_action.y}] dir: {best_action.direction}")
+            f"Best move: {eval_score} with: [{self.best_action.x},{self.best_action.y}] dir: {self.best_action.direction}")
         print(f"Times iterated through: {self.times_iterated}")
+        print("PRUNES: "+str(self.prunes))
 
     def actions(self, board: Board) -> List[Action]:
         """Computes all the possible actions."""
@@ -96,19 +97,21 @@ class AI(Player):
         self.times_iterated += 1
         # if node is a leaf node return evaluation value of the node
         if current_depth == self.max_depth or node.terminal_state():
-            res = self.eval(node)
-            #print("EVAL: "+str(res))
-            return res
+            return self.eval(node)
 
         if maximizingPlayer:  # max part of the minimax
             maxvalue = float('-inf')
             for action in self.actions(node):
                 value = self.alpha_beta_pruning(
                     Board.board_from_move(node, action), current_depth+1, alpha, beta, False)
-                maxvalue = max(maxvalue, value)
+                if value > maxvalue:
+                    self.best_action = action
+                    maxvalue = value
+                    #maxvalue = max(maxvalue, value)
                 alpha = max(alpha, maxvalue)
                 #print("ALPHA: "+str(alpha)+" BETA: "+str(beta))
                 if beta <= alpha:
+                    self.prunes += 1
                     break
             return maxvalue
         else:
@@ -119,6 +122,7 @@ class AI(Player):
                 minvalue = min(minvalue, value)
                 beta = min(beta, minvalue)
                 if beta <= alpha:
+                    self.prunes += 1
                     break
             return minvalue
 
