@@ -1,27 +1,37 @@
 # Class for the board of the game
 from typing import List, Optional
-from copy import deepcopy
 
 from .player import Player, Action
-import time
 
 
 class Board:
     """A board the players can interact with.
     Initially empty.
+    State: A matrix representing the board, None means the cell is free,
+    0 is occupied by a white tile, 1 by a black tile.
     """
     state: List[List[Optional[int]]]
     size: int
+    white_score: int
+    black_score: int
+    white_openness: int
+    black_openness: int
 
     def __init__(self, size: int = 11, winning_rule: int = 2) -> None:
         self.size = size
         self.rule = winning_rule
         self.state = [[None for _ in range(size)] for _ in range(size)]
+        self.white_score = 0
+        self.black_score = 0
 
     def __copy__(self) -> "Board":
         """Return a deepcopy of the current instance."""
         new_board = Board(self.size, self.rule)
-        new_board.state = deepcopy(self.state)
+        new_board.white_score = self.white_score
+        new_board.black_score = self.black_score
+        new_board.white_openness = self.white_openness
+        new_board.black_openness = self.black_openness
+        new_board.state = [[cell for cell in col] for col in self.state]
         return new_board
 
     def send(self, player: Player) -> None:
@@ -38,14 +48,8 @@ class Board:
 
     def update_state(self, move: Action):
         self.state[move.y][move.x] = 0
-        if move.direction == 0:
-            self.state[move.y-1][move.x] = 1
-        elif move.direction == 1:
-            self.state[move.y][move.x + 1] = 1
-        elif move.direction == 2:
-            self.state[move.y+1][move.x] = 1
-        else:
-            self.state[move.y][move.x-1] = 1
+        x, y = move.direction_position()
+        self.state[y][x] = 1
 
     def terminal_state(self) -> bool:
         """Determine whether the game is over."""
@@ -118,7 +122,7 @@ class Board:
         """Counts the number of connected tiles."""
         if visited_tiles[x][y] == True:
             return 0
-        if self.state[x][y] != color:  # If its not the same color, return.
+        if self.state[x][y] != color:
             return 0
         visited_tiles[x][y] = True
         current_block = 1
@@ -147,14 +151,25 @@ class Board:
                         actions.append(Action(x, y, direction))
         return actions
 
-    def openness(self, black: bool) -> int:
-        """Checks how many open positions are next to each color."""
-        openness = 0
+    def compute_openness(self):
+        """Updates how many open positions are next to each color."""
+        self.white_openness = 0
+        self.black_openness = 0
         for y, line in enumerate(self.state):
             for x, cell in enumerate(line):
-                if cell == black:
-                    openness += len(self._free_neighbors(x, y))
-        return openness
+                if cell == 0:
+                    self.white_openness += len(self._free_neighbors(x, y))
+                elif cell == 1:
+                    self.black_openness += len(self._free_neighbors(x, y))
+
+    def openness_from_move(self, move: Action):
+        """Modifies the openness scores from the move."""
+        self.white_openness -= len(self.touch_color(move.x, move.y))
+        self.black_openness -= len(self.touch_color(move.x,
+                                                    move.y, white=False))
+        x, y = move.direction_position()
+        self.black_openness -= len(self.touch_color(x, y, white=False))
+        self.white_openness -= len(self.touch_color(x, y))
 
     def _free_neighbors(self, x: int, y: int) -> List[int]:
         """Returns the free adjacents directions 0 up, 1 right, 2 down, 3 left."""
@@ -169,9 +184,33 @@ class Board:
             neighbors.append(3)
         return neighbors
 
+    def score_from_move(self, move: Action):
+        if len(self.touch_color(move.x, move.y)) > 0:
+            self.white_score += 1
+        x, y = move.direction_position()
+        if len(self.touch_color(x, y, white=False)) > 0:
+            self.black_score += 1
+
+    def touch_color(self, x: int, y: int, white: bool = True) -> List[int]:
+        """Determines all the neighbors of the same color.
+        Returns a list with the directions of the same color neighbors 0 up, 1 right, 2 down, 3 left.
+        """
+        neighbors = []
+        if (not y == 0) and self.state[y-1][x] == int(white):
+            neighbors.append(0)
+        if (not x == (self.size - 1)) and self.state[y][x+1] == int(white):
+            neighbors.append(1)
+        if (not y == (self.size - 1)) and self.state[y+1][x] == int(white):
+            neighbors.append(2)
+        if (not x == 0) and self.state[y][x-1] == int(white):
+            neighbors.append(3)
+        return neighbors
+
     @staticmethod
     def board_from_move(board: "Board", action: Action) -> Optional["Board"]:
         """Create a new board from a move."""
         new_board = board.__copy__()
         new_board.update_state(action)
+        new_board.score_from_move(action)
+        new_board.openness_from_move(action)
         return new_board
