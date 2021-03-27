@@ -20,6 +20,7 @@ class AI(Player):
         list_actions = board.actions()
         eval_score = 0
         evalmax = 0
+        best_action = list_actions[0]
         for action in list_actions:
             eval_score = self.alpha_beta_pruning(
                 Board.board_from_move(board, action), 0, float('-inf'), float('inf'), True)
@@ -34,7 +35,6 @@ class AI(Player):
         print(
             f"Best move: {evalmax} with: [{best_action.x},{best_action.y}] dir: {best_action.direction}")
         print(f"Times iterated through: {self.times_iterated}")
-        
 
     def alpha_beta_pruning(self, node: Board, current_depth: int,
                            alpha: int, beta: int, maximizingPlayer: bool) -> int:
@@ -67,7 +67,7 @@ class AI(Player):
 
     def eval(self, state: Board) -> int:
         """Evaluate a state for a the player."""
-       
+
         scores = state.calculate_players_total_block_size()
         if state.terminal_state():
             if self.white and scores[0] > scores[1] or not self.white and scores[0] < scores[1]:
@@ -77,8 +77,9 @@ class AI(Player):
             return float('-inf')
         openness_player = state.openness(black=not self.white)
         openness_opponent = state.openness(black=self.white)
-        score_player = scores[not self.white] #since it returns as [white,black],
+        # since it returns as [white,black],
+        score_player = scores[not self.white]
         score_opponent = scores[self.white]
-      
+
         #print("Eval time taken:"+str(end-start))
         return (score_player - score_opponent) + (openness_player - openness_opponent)
