@@ -65,11 +65,18 @@ class Human(Player):
 
     def ask_action(self) -> Action:
         """Asks the human for a move."""
-        print("What is your move ?")
-        x = int(input("Start by giving the x coordinate of the white part."))
-        y = int(input("Now give the y coordinate of the white part."))
-        direction = int(input(
-            "The direction of the black part? 0 is up, 1 is right, 2 is down, 3 is left"))
+        correct_move = False
+        while not correct_move:
+            try:
+                print("What is your move ?")
+                x = int(input("Start by giving the x coordinate of the white part."))
+                y = int(input("Now give the y coordinate of the white part."))
+                direction = int(input(
+                    "The direction of the black part? 0 is up, 1 is right, 2 is down, 3 is left"))
+                correct_move = True
+            except ValueError:
+                print("Error please enter an integer")
+
         return Action(x, y, direction)
 
     def receive(self, board: "Board") -> None:
