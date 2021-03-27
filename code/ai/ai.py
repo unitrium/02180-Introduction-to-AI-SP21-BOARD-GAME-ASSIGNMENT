@@ -1,6 +1,5 @@
 """Class implementing an artificial intelligence to play the game."""
 from ..game import Player, Board
-import time
 
 
 class AI(Player):
@@ -17,7 +16,6 @@ class AI(Player):
 
     def receive(self, board: Board) -> None:
         """Call when its the palyer's turn, send him the state of the board."""
-        beginning = time.time()
         self.times_iterated = 0
         list_actions = board.actions()
         eval_score = 0
@@ -36,9 +34,7 @@ class AI(Player):
         print(
             f"Best move: {evalmax} with: [{best_action.x},{best_action.y}] dir: {best_action.direction}")
         print(f"Times iterated through: {self.times_iterated}")
-        end = time.time()
-        print(f"Time taken for depth: {self.max_depth} \
-              is: {end - beginning} seconds.")
+        
 
     def alpha_beta_pruning(self, node: Board, current_depth: int,
                            alpha: int, beta: int, maximizingPlayer: bool) -> int:
@@ -71,7 +67,7 @@ class AI(Player):
 
     def eval(self, state: Board) -> int:
         """Evaluate a state for a the player."""
-        start = time.time()
+       
         scores = state.calculate_players_total_block_size()
         if state.terminal_state():
             if self.white and scores[0] > scores[1] or not self.white and scores[0] < scores[1]:
@@ -83,6 +79,6 @@ class AI(Player):
         openness_opponent = state.openness(black=self.white)
         score_player = scores[not self.white] #since it returns as [white,black],
         score_opponent = scores[self.white]
-        end = time.time()
+      
         #print("Eval time taken:"+str(end-start))
         return (score_player - score_opponent) + (openness_player - openness_opponent)
