@@ -15,7 +15,7 @@ class AI(Player):
         self.max_depth = max_depth
 
     def receive(self, board: Board) -> None:
-        """Call when its the palyer's turn, send him the state of the board."""
+        """Call when it's the player's turn, send him the state of the board."""
         self.times_iterated = 0
         list_actions = board.actions()
         eval_score = 0
