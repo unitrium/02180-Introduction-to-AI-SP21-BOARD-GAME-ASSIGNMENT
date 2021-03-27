@@ -5,8 +5,10 @@ from code.ai import AI
 import matplotlib.pyplot as plt
 
 board = Board(11)
-player_1 = AI(white=True, max_depth=2, heuristics_neighbors=False, heuristics_edges=False)
-player_2 = AI(white=False, max_depth=2, heuristics_neighbors=False, heuristics_edges=False)
+player_1 = AI(white=True, max_depth=4,
+              heuristics_neighbors=False, heuristics_edges=False)
+player_2 = AI(white=False, max_depth=3,
+              heuristics_neighbors=False, heuristics_edges=False)
 turncount = 1
 timearray1 = []
 timearray2 = []
