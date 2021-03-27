@@ -147,12 +147,12 @@ class Board:
                         actions.append(Action(x, y, direction))
         return actions
 
-    def openness(self, white: bool) -> int:
+    def openness(self, black: bool) -> int:
         """Checks how many open positions are next to each color."""
         openness = 0
         for y, line in enumerate(self.state):
             for x, cell in enumerate(line):
-                if cell == white:
+                if cell == black:
                     openness += len(self._free_neighbors(x, y))
         return openness
 
