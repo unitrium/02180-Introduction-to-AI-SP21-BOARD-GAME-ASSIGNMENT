@@ -67,6 +67,7 @@ class AI(Player):
                                 heuristic_actions.append(action)
                         actions.append(action)
                     free_tiles += 1
+        # heuristic for the first move is the AI starts.
         if free_tiles == board.size * board.size:
             return [Action(int(board.size/2), 1, 0)]
         return heuristic_actions if len(heuristic_actions) > len(actions)/10 else actions

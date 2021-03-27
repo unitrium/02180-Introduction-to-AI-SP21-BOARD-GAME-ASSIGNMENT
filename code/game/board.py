@@ -102,18 +102,16 @@ class Board:
 
     def declare_winner(self) -> None:
         """Declares a winner."""
-        res = self.calculate_players_total_block_size()
-        white_total_blocks = res[0]
-        black_total_blocks = res[1]
+        self.calculate_players_total_block_size()
         print("Game ended with the following score: ")
         print(
-            f"  - White finished the game totalling a {white_total_blocks} block size.")
+            f"  - White finished the game totalling a {self.white_score} block size.")
         print(
-            f"  - Black finished the game totalling a {black_total_blocks} block size.")
-        if white_total_blocks > black_total_blocks:
+            f"  - Black finished the game totalling a {self.black_score} block size.")
+        if self.white_score > self.black_score:
             print(
                 "White has the highest total amount of blocks, and therefore is the winner!")
-        elif black_total_blocks > white_total_blocks:
+        elif self.white_score > self.black_score:
             print(
                 "Black has the highest total amount of blocks, and therefore is the winner!")
         else:
