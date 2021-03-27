@@ -19,9 +19,9 @@ if __name__ == "__main__":
         white = Human(white=True)
     if ai_response == "YES":
         if color == "BLACK":
-            white = AI(white=True, max_depth=3)
+            white = AI(white=True, max_depth=2)
         else:
-            black = AI(white=False, max_depth=3)
+            black = AI(white=False, max_depth=2)
     else:
         if color == "BLACK":
             white = Human(white=True)
