@@ -79,9 +79,9 @@ class AI(Player):
             elif scores[0] == scores[1]:
                 return 0
             return float('-inf')
-        openness_player = state.openness(white=self.white)
-        openness_opponent = state.openness(white=not self.white)
-        score_player = scores[not self.white]
+        openness_player = state.openness(black=not self.white)
+        openness_opponent = state.openness(black=self.white)
+        score_player = scores[not self.white] #since it returns as [white,black],
         score_opponent = scores[self.white]
         end = time.time()
         #print("Eval time taken:"+str(end-start))
