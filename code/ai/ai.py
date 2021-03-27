@@ -18,7 +18,7 @@ class AI(Player):
     def receive(self, board: Board) -> None:
         """Call when its the palyer's turn, send him the state of the board."""
         self.times_iterated = 0
-        list_actions = board.actions()
+        list_actions = self.move_heuristics(board.actions(), board)
         eval_score = 0
         evalmax = 0
         best_action = list_actions[0]
@@ -53,7 +53,7 @@ class AI(Player):
                     new_actions.append(action)
                 if (y == 1 or y == board.size - 2) and not (x == 0 or x == board.size - 1):
                     new_actions.append(action)
-        return new_actions if len(actions) > 0 else actions
+        return new_actions if len(new_actions) > 0 else actions
 
     def alpha_beta_pruning(self, node: Board, current_depth: int,
                            alpha: int, beta: int, maximizingPlayer: bool) -> int:
