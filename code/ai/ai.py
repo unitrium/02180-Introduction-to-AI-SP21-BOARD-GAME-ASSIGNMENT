@@ -130,7 +130,7 @@ class AI(Player):
 
     def eval(self, state: Board) -> int:
         """Evaluate a state for a the player."""
-        state.compute_openness()
+        state.calculate_players_total_block_size()
         if state.terminal_state():
             if self.white and state.white_score > state.black_score or not self.white and state.white_score < state.black_score:
                 return float('inf')
