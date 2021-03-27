@@ -142,25 +142,24 @@ class Board:
                 visited_tiles, x, y+1, color)
         return current_block
 
-    def compute_openness(self):
+    def compute_openness(self, move: Action = None):
         """Updates how many open positions are next to each color."""
-        self.white_openness = 0
-        self.black_openness = 0
-        for y, line in enumerate(self.state):
-            for x, cell in enumerate(line):
-                if cell == 0:
-                    self.white_openness += len(self._free_neighbors(x, y))
-                elif cell == 1:
-                    self.black_openness += len(self._free_neighbors(x, y))
-
-    def openness_from_move(self, move: Action):
-        """Modifies the openness scores from the move."""
-        self.white_openness -= len(self.touch_color(move.x, move.y))
-        self.black_openness -= len(self.touch_color(move.x,
-                                                    move.y, white=False))
-        x, y = move.direction_position()
-        self.black_openness -= len(self.touch_color(x, y, white=False))
-        self.white_openness -= len(self.touch_color(x, y))
+        if move is not None:
+            self.white_openness -= len(self.touch_color(move.x, move.y))
+            self.black_openness -= len(self.touch_color(move.x,
+                                                        move.y, white=False))
+            x, y = move.direction_position()
+            self.black_openness -= len(self.touch_color(x, y, white=False))
+            self.white_openness -= len(self.touch_color(x, y))
+        else:
+            self.white_openness = 0
+            self.black_openness = 0
+            for y, line in enumerate(self.state):
+                for x, cell in enumerate(line):
+                    if cell == 0:
+                        self.white_openness += len(self._free_neighbors(x, y))
+                    elif cell == 1:
+                        self.black_openness += len(self._free_neighbors(x, y))
 
     def _free_neighbors(self, x: int, y: int) -> List[int]:
         """Returns the free adjacents directions 0 up, 1 right, 2 down, 3 left."""
@@ -201,5 +200,5 @@ class Board:
         new_board = board.__copy__()
         new_board.update_state(action)
         new_board.score_from_move(action)
-        new_board.openness_from_move(action)
+        new_board.compute_openness(action)
         return new_board
