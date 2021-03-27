@@ -15,21 +15,22 @@ while not board.terminal_state():
     if turncount % 2 == 1:
         print("Player 1")
         start_1 = time()
-        timearray1.append(start_1)
         board.send(player_1)
         print(f"Player 1 took {time() - start_1}s")
+        timearray1.append(time() - start_1)
         white_turn = False
     else:
         print("Player 2")
         start_2 = time()
-        timearray2.append(start_2)
         board.send(player_2)
         print(f"Player 2 took {time() - start_2}s")
         white_turn = True
+        timearray2.append(time() - start_2)
     turncount += 1
 
 plt.plot(timearray1, label="black")
 plt.plot(timearray2, label="white")
 plt.xlabel('Round')
 plt.ylabel('Time in seconds')
+plt.legend()
 plt.show()
