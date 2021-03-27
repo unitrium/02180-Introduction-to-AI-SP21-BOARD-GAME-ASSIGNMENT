@@ -1,5 +1,6 @@
 """Class implementing an artificial intelligence to play the game."""
-from ..game import Player, Board
+from ..game import Player, Board, Action
+from typing import List
 
 
 class AI(Player):
@@ -35,6 +36,20 @@ class AI(Player):
         print(
             f"Best move: {evalmax} with: [{best_action.x},{best_action.y}] dir: {best_action.direction}")
         print(f"Times iterated through: {self.times_iterated}")
+
+    def move_heuristics(self, actions: List[Action], board: Board) -> List[Action]:
+        """Uses heuristics to select some of the best moves and reduce the search space."""
+        new_actions = []
+        for action in actions:
+            if self.white:
+                if (action.x == 1 or action.x == board.size - 2) and not (action.y == 0 or action.y == board.size - 1):
+                    new_actions.append(action)
+                if (action.y == 1 or action.y == board.size - 2) and not (action.x == 0 or action.x == board.size - 1):
+                    new_actions.append(action)
+            else:
+                x, y = action
+
+        return new_actions if len(actions) > 0 else actions
 
     def alpha_beta_pruning(self, node: Board, current_depth: int,
                            alpha: int, beta: int, maximizingPlayer: bool) -> int:
