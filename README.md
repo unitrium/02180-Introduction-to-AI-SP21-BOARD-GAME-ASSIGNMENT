@@ -7,12 +7,17 @@ The goal of this assignment is to implement an AI which play a board game.
 
 This code is for the game called __Taiji__.
 
+## Description
+
+__Taiji__ is a two-player game whose goal is to have the 3 biggest groups of one's color by placing black and white tiles in a 11x11 board.
+A group is composed by all the squares connected to each other horizontally or vertically (not diagonally).
+The game ends when there are no more empty space of size 2. The player with the highest score wins the game.
 
 ## Requirements
 
 python 3.8
 
-## How to play
+## Run the code
 
 In order to play this game, you have to run 
 ```python
@@ -23,8 +28,4 @@ Then you have to choose if you want to play with an AI (YES/NO) and which color 
 
 In our implementation, X represents the white color and O represents the black one.  
 
-When it's your turn you have to indicate where you want to play by giving the x and y coordinates of the white part of the piece and the direction d of where will put the black part.  
-
-## How to win
-
-At the end of the game -when there is no more adjacent free squares on the board- the code will compute the score of each players by computing the 3 biggest groups of each player color. The one with the highest score win the game.
+When it's your turn you have to indicate where you want to play by giving the x and y coordinates of the white part of the piece and the direction d of where will put the black part.
