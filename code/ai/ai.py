@@ -48,8 +48,11 @@ class AI(Player):
                 if (action.y == 1 or action.y == board.size - 2) and not (action.x == 0 or action.x == board.size - 1):
                     new_actions.append(action)
             else:
-                x, y = action
-
+                x, y = action.direction_position()
+                if (x == 1 or x == board.size - 2) and not (y == 0 or y == board.size - 1):
+                    new_actions.append(action)
+                if (y == 1 or y == board.size - 2) and not (x == 0 or x == board.size - 1):
+                    new_actions.append(action)
         return new_actions if len(actions) > 0 else actions
 
     def alpha_beta_pruning(self, node: Board, current_depth: int,
