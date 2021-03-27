@@ -10,13 +10,17 @@ class AI(Player):
     """
     max_depth: int
     times_iterated: int
-    heuristics: bool
+    heuristics_edges: bool
+    heuristics_neighbors: bool
 
-    def __init__(self, white: bool, max_depth: int, heuristics: bool = False) -> None:
+    def __init__(self, white: bool, max_depth: int,
+                 heuristics_edges: bool = False, heuristics_neighbors: bool = False
+                 ) -> None:
         super().__init__(white)
         self.max_depth = max_depth
         self.turn = 0
-        self.heuristics = heuristics
+        self.heuristics_edges = heuristics_edges
+        self.heuristics_neighbors = heuristics_neighbors
 
     def receive(self, board: Board) -> None:
         """Call when it's the player's turn, send him the state of the board."""
@@ -51,7 +55,7 @@ class AI(Player):
                 if tile is None:
                     for direction in board._free_neighbors(x, y):
                         action = Action(x, y, direction)
-                        if self.heuristics and self.turn < 10:
+                        if self.turn < 10:
                             if self.move_heuristics(action, board):
                                 heuristic_actions.append(action)
                         actions.append(action)
@@ -59,17 +63,25 @@ class AI(Player):
 
     def move_heuristics(self, action: Action, board: Board) -> bool:
         """Uses heuristics to select some of the best moves and reduce the search space."""
-        if self.white:
-            if (action.x == 1 or action.x == board.size - 2) and not (action.y == 0 or action.y == board.size - 1):
+        x, y = action.direction_position()
+        if self.heuristics_edges:
+            # A heuristic to consider playing in the edges first but not in corners.
+            if self.white:
+                if (action.x == 1 or action.x == board.size - 2) and not (action.y == 0 or action.y == board.size - 1):
+                    return True
+                if (action.y == 1 or action.y == board.size - 2) and not (action.x == 0 or action.x == board.size - 1):
+                    return True
+            else:
+                if (x == 1 or x == board.size - 2) and not (y == 0 or y == board.size - 1):
+                    return True
+                if (y == 1 or y == board.size - 2) and not (x == 0 or x == board.size - 1):
+                    return True
+        if self.heuristics_neighbors:
+            # A heuristic to consider cells next to a tile first
+            if len(board.touch_color(action.x, action.y)) > 0 or len(board.touch_color(action.x, action.y, white=False)) > 0:
                 return True
-            if (action.y == 1 or action.y == board.size - 2) and not (action.x == 0 or action.x == board.size - 1):
-                return True
-        else:
-            x, y = action.direction_position()
-            if (x == 1 or x == board.size - 2) and not (y == 0 or y == board.size - 1):
-                return True
-            if (y == 1 or y == board.size - 2) and not (x == 0 or x == board.size - 1):
-                return True
+            if len(board.touch_color(x, y)) > 0 or len(board.touch_color(x, y, white=False)):
+                return False
         return False
 
     def alpha_beta_pruning(self, node: Board, current_depth: int,
