@@ -1,5 +1,6 @@
 """Class implementing an artificial intelligence to play the game."""
-from ..game import Player, Board
+from ..game import Player, Board, Action
+from typing import List
 
 
 class AI(Player):
@@ -9,15 +10,19 @@ class AI(Player):
     """
     max_depth: int
     times_iterated: int
+    heuristics: bool
 
-    def __init__(self, white: bool, max_depth: int) -> None:
+    def __init__(self, white: bool, max_depth: int, heuristics: bool = False) -> None:
         super().__init__(white)
         self.max_depth = max_depth
+        self.turn = 0
+        self.heuristics = heuristics
 
     def receive(self, board: Board) -> None:
         """Call when it's the player's turn, send him the state of the board."""
         self.times_iterated = 0
-        list_actions = board.actions()
+        self.turn += 1
+        list_actions = self.actions(board)
         eval_score = 0
         evalmax = 0
         best_action = list_actions[0]
@@ -37,6 +42,36 @@ class AI(Player):
             f"Best move: {evalmax} with: [{best_action.x},{best_action.y}] dir: {best_action.direction}")
         print(f"Times iterated through: {self.times_iterated}")
 
+    def actions(self, board: Board) -> List[Action]:
+        """Computes all the possible actions."""
+        actions = []
+        heuristic_actions = []
+        for y, line in enumerate(board.state):
+            for x, tile in enumerate(line):
+                if tile is None:
+                    for direction in board._free_neighbors(x, y):
+                        action = Action(x, y, direction)
+                        if self.heuristics and self.turn < 10:
+                            if self.move_heuristics(action, board):
+                                heuristic_actions.append(action)
+                        actions.append(action)
+        return heuristic_actions if len(heuristic_actions) > len(actions)/10 else actions
+
+    def move_heuristics(self, action: Action, board: Board) -> bool:
+        """Uses heuristics to select some of the best moves and reduce the search space."""
+        if self.white:
+            if (action.x == 1 or action.x == board.size - 2) and not (action.y == 0 or action.y == board.size - 1):
+                return True
+            if (action.y == 1 or action.y == board.size - 2) and not (action.x == 0 or action.x == board.size - 1):
+                return True
+        else:
+            x, y = action.direction_position()
+            if (x == 1 or x == board.size - 2) and not (y == 0 or y == board.size - 1):
+                return True
+            if (y == 1 or y == board.size - 2) and not (x == 0 or x == board.size - 1):
+                return True
+        return False
+
     def alpha_beta_pruning(self, node: Board, current_depth: int,
                            alpha: int, beta: int, maximizingPlayer: bool) -> int:
         """Alpha beta pruning implementation."""
@@ -47,7 +82,7 @@ class AI(Player):
 
         if maximizingPlayer:  # max part of the minimax
             maxvalue = float('-inf')
-            for action in node.actions():
+            for action in self.actions(node):
                 value = self.alpha_beta_pruning(
                     Board.board_from_move(node, action), current_depth+1, alpha, beta, False)
                 maxvalue = max(maxvalue, value)
@@ -57,7 +92,7 @@ class AI(Player):
             return maxvalue
         else:
             minvalue = float('inf')  # min part of the minimax
-            for action in node.actions():
+            for action in self.actions(node):
                 value = self.alpha_beta_pruning(
                     Board.board_from_move(node, action), current_depth+1, alpha, beta, True)
                 minvalue = min(minvalue, value)
