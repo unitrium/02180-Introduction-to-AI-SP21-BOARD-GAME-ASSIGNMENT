@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 
 board = Board(11)
 player_1 = AI(white=True, max_depth=4,
-              heuristics_neighbors=False, heuristics_edges=False)
+              heuristics_neighbors=True, heuristics_edges=False)
 player_2 = AI(white=False, max_depth=3,
-              heuristics_neighbors=False, heuristics_edges=False)
+              heuristics_neighbors=True, heuristics_edges=False)
 turncount = 1
 timearray1 = []
 timearray2 = []
@@ -30,8 +30,8 @@ while not board.terminal_state():
         timearray2.append(time() - start_2)
     turncount += 1
 
-plt.plot(timearray1, label="black")
-plt.plot(timearray2, label="white")
+plt.plot(timearray1, label="Player 1/ depth 4")
+plt.plot(timearray2, label="Player 2/ depth 3")
 plt.xlabel('Round')
 plt.ylabel('Time in seconds')
 plt.legend()
